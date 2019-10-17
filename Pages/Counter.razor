@@ -1,16 +1,58 @@
 ﻿@page "/counter"
+@using System.Runtime.CompilerServices
+@using Blazor.Extensions.Storage
+@using Microsoft.Extensions.Logging
+@using SoundSignalWebApp.Scripts
+@inject IJSRuntime js
+@inject LocalStorage localStorage
+@inject ILogger<string> Logger
 
 <h1>Counter</h1>
 
 <p>Current count: @currentCount</p>
 
+<p>CreateWav status: @fileStatus</p>
+
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
-@code {
-    int currentCount = 0;
+<button class="btn btn-primary" @onclick="@(async () => await CreateWavAsync())">Craete Wav</button>
 
+@code {
+
+    private LocalStorage localStroage;
+    
+    int currentCount = 0;
+    string fileStatus = "start";
+    
     void IncrementCount()
     {
         currentCount++;
     }
+
+    async ValueTask CreateWavAsync()
+    {
+        var data = new CraeteWav();
+        fileStatus = "execute";
+        
+        var stroage = localStroage ?? (localStroage = new LocalStorage(js));
+        fileStatus = "load stroage";
+        
+        var fileData = await stroage.GetItem<byte[]>("test.wav");
+        if (fileData == null)
+        {
+            await data.Create(js);
+
+            fileStatus = "finish";
+            
+            fileData = await stroage.GetItem<byte[]>("test.wav");
+        }
+        
+        var fileString = $"data:audio/wav;base64,{Convert.ToBase64String(fileData)}";
+        js.PlaySound(fileString);
+        
+        Logger.Log(LogLevel.Debug, fileString);
+
+        fileStatus = "played sound";
+    }
+
 }
