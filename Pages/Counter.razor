@@ -1,5 +1,4 @@
 ﻿@page "/counter"
-@using System.Runtime.CompilerServices
 @using Blazor.Extensions.Storage
 @using Microsoft.Extensions.Logging
 @using SoundSignalWebApp.Scripts
@@ -34,13 +33,13 @@
         var data = new Wav();
         fileStatus = "execute";
         
-        var stroage = localStroage ?? (localStroage = new LocalStorage(js));
         fileStatus = "load stroage";
         
         await data.Create(js);
 
         fileStatus = "finish";
-            
+        
+        var stroage = localStroage ?? (localStroage = new LocalStorage(js));
         var fileData = await stroage.GetItem<byte[]>("test.wav");
         
         var fileString = $"data:audio/wav;base64,{Convert.ToBase64String(fileData)}";
