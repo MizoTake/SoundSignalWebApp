@@ -37,13 +37,11 @@
         var stroage = localStroage ?? (localStroage = new LocalStorage(js));
         fileStatus = "load stroage";
         
-        var fileData = await stroage.GetItem<byte[]>("test.wav");
-        
         await data.Create(js);
 
         fileStatus = "finish";
             
-        fileData = await stroage.GetItem<byte[]>("test.wav");
+        var fileData = await stroage.GetItem<byte[]>("test.wav");
         
         var fileString = $"data:audio/wav;base64,{Convert.ToBase64String(fileData)}";
         js.PlaySound(fileString);
