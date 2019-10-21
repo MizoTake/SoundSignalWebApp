@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
-using Blazor.Extensions.Storage;
 
 namespace SoundSignalWebApp.Scripts
 {
@@ -57,9 +56,9 @@ namespace SoundSignalWebApp.Scripts
                 
                 fileData.AddRange(Header(fileSize, formatChunkSize, formatId, bytePerSec, blockSize, dataChunkSize));
 
-                for (var cnt = 0; cnt < dataLength; cnt++)
+                for (var i = 0; i < dataLength; i++)
                 {
-                    var radian = (double)cnt / sampleRate;
+                    var radian = (double)i / sampleRate;
                     radian *= 2 * Math.PI;
          
                     var wave = Math.Sin(radian * 10);
@@ -73,17 +72,15 @@ namespace SoundSignalWebApp.Scripts
             }
         }
 
-        public async Task Create(IJSRuntime js)
+        public byte[] Create(IJSRuntime js)
         {
-            var localStorage = new LocalStorage(js);
-            
             var channel = (ushort)2;
             var sampleRate = (uint)44100;
             var bitPerSample = (ushort)16;
             
             var model = new WavModel(channel, bitPerSample, sampleRate);
-            
-            await localStorage.SetItem("test.wav", model.Output());
+
+            return model.Output();
         }
     }
 }

@@ -30,19 +30,21 @@
 
     async ValueTask CreateWavAsync()
     {
-        var data = new Wav();
+        var wav = new Wav();
         fileStatus = "execute";
         
         fileStatus = "load stroage";
         
-        await data.Create(js);
+        var wavFile = wav.Create(js);
+        
+//        await localStorage.SetItem("test.wav", wavFile);
 
         fileStatus = "finish";
         
-        var stroage = localStroage ?? (localStroage = new LocalStorage(js));
-        var fileData = await stroage.GetItem<byte[]>("test.wav");
+//        var stroage = localStroage ?? (localStroage = new LocalStorage(js));
+//        var fileData = await stroage.GetItem<byte[]>("test.wav");
         
-        var fileString = $"data:audio/wav;base64,{Convert.ToBase64String(fileData)}";
+        var fileString = $"data:audio/wav;base64,{Convert.ToBase64String(wavFile)}";
         js.PlaySound(fileString);
         
         Logger.Log(LogLevel.Debug, fileString);
